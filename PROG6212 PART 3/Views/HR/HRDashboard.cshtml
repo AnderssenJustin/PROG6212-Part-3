@@ -1,1 +1,135 @@
-﻿
+﻿@model List<PROG6212_PART_3.Models.Claim>
+
+@{
+    ViewBag.Title = "HR Dashboard";
+    var totalAmount = Model?.Sum(c => c.TotalAmount) ?? 0;
+    var totalHours = Model?.Sum(c => c.HoursWorked) ?? 0;
+    var totalClaims = Model?.Count ?? 0;
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">HR Dashboard - Automated Reports</h2>
+        <div class="mx-auto" style="height:5px; width:100px; background: linear-gradient(90deg, #0d6efd, #6610f2); border-radius:3px; margin-bottom:10px;"></div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Summary Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #0d6efd, #6610f2);">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-check fs-1 mb-2"></i>
+                    <h5 class="card-title">Total Approved Claims</h5>
+                    <p class="card-text fs-3">@totalClaims</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #198754, #0dcaf0);">
+                <div class="card-body text-center">
+                    <i class="bi bi-cash-stack fs-1 mb-2"></i>
+                    <h5 class="card-title">Total Amount</h5>
+                    <p class="card-text fs-3">R @totalAmount.ToString("F2")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
+                <div class="card-body text-center">
+                    <i class="bi bi-clock-history fs-1 mb-2"></i>
+                    <h5 class="card-title">Total Hours</h5>
+                    <p class="card-text fs-3">@totalHours.ToString("F1")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Automated Report Buttons -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h4 class="fw-bold mb-3">Automated Report Generation</h4>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <a asp-action="GenerateMonthlyReport" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-calendar-month me-2"></i>
+                    Generate Monthly Report
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a asp-action="GenerateSummaryReport" class="btn btn-success btn-lg w-100">
+                    <i class="bi bi-file-text me-2"></i>
+                    Generate Summary Report
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <button class="btn btn-info btn-lg w-100" onclick="window.print()">
+                    <i class="bi bi-printer me-2"></i>
+                    Print Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approved Claims Table -->
+    <div class="card shadow-sm p-3">
+        <h4 class="fw-bold mb-3">Approved Claims for Payment Processing</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Claim ID</th>
+                        <th>Lecturer</th>
+                        <th>Hours</th>
+                        <th>Rate</th>
+                        <th>Total Amount</th>
+                        <th>Submitted Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var claim in Model)
+                        {
+                            <tr>
+                                <td>@claim.ClaimId</td>
+                                <td>@claim.LecturerName</td>
+                                <td>@claim.HoursWorked</td>
+                                <td>R @claim.HourlyRate.ToString("F2")</td>
+                                <td><strong>R @claim.TotalAmount.ToString("F2")</strong></td>
+                                <td>@claim.SubmittedDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <a asp-action="GenerateInvoice" asp-route-claimId="@claim.ClaimId"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-file-earmark-arrow-down"></i> Generate Invoice
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No approved claims for processing</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
