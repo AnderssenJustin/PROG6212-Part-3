@@ -3,16 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\lecturer\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\lecturer\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\lecturer\\claimstatus.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\lecturer\\claimstatus.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\hr\\hrdashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\hr\\hrdashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\lecturer\\submitclaim.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\lecturer\\submitclaim.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -27,40 +19,15 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Dashboard.cshtml",
-              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Lecturer\\Dashboard.cshtml",
-              "RelativeDocumentMoniker": "Views\\Lecturer\\Dashboard.cshtml",
-              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Lecturer\\Dashboard.cshtml",
-              "RelativeToolTip": "Views\\Lecturer\\Dashboard.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJMAAAAGAAAAAAAAAA==",
+              "Title": "SubmitClaim.cshtml",
+              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Lecturer\\SubmitClaim.cshtml",
+              "RelativeDocumentMoniker": "Views\\Lecturer\\SubmitClaim.cshtml",
+              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Lecturer\\SubmitClaim.cshtml",
+              "RelativeToolTip": "Views\\Lecturer\\SubmitClaim.cshtml",
+              "ViewState": "AgIAAGwAAAAAAAAAAAAAAH0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-11T11:32:06.982Z",
+              "WhenOpened": "2025-11-11T11:36:10.087Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ClaimStatus.cshtml",
-              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Lecturer\\ClaimStatus.cshtml",
-              "RelativeDocumentMoniker": "Views\\Lecturer\\ClaimStatus.cshtml",
-              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Lecturer\\ClaimStatus.cshtml",
-              "RelativeToolTip": "Views\\Lecturer\\ClaimStatus.cshtml",
-              "ViewState": "AgIAAEEAAAAAAAAAAAAUwFoAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-11T11:28:20.288Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "HRDashboard.cshtml",
-              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\HR\\HRDashboard.cshtml",
-              "RelativeDocumentMoniker": "Views\\HR\\HRDashboard.cshtml",
-              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\HR\\HRDashboard.cshtml",
-              "RelativeToolTip": "Views\\HR\\HRDashboard.cshtml",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAUwIYAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-11T11:17:35.242Z"
             }
           ]
         }
