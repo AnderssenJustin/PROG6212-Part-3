@@ -8,6 +8,7 @@
     <div class="text-center mb-4">
         <h2 class="fw-bold">Claim Approval - Programme Coordinator</h2>
         <div class="mx-auto" style="height:5px; width:100px; background: linear-gradient(90deg, #0d6efd, #6610f2); border-radius:3px; margin-bottom:10px;"></div>
+        <p class="text-muted">Automated verification system enabled</p>
     </div>
 
     @if (TempData["Success"] != null)
@@ -18,18 +19,27 @@
         </div>
     }
 
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
     <div class="card shadow-sm p-3">
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>Lecturer</th>
-                        <th>Hours Worked</th>
-                        <th>Hourly Rate</th>
-                        <th>Total Amount</th>
+                        <th>Hours</th>
+                        <th>Rate</th>
+                        <th>Total</th>
                         <th>Notes</th>
-                        <th>Supporting Documentation</th>
-                        <th>Submitted Date</th>
+                        <th>Document</th>
+                        <th>Date</th>
+                        <th>Automated Checks</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -42,7 +52,7 @@
                                 <td>@claim.LecturerName</td>
                                 <td>@claim.HoursWorked</td>
                                 <td>R @claim.HourlyRate.ToString("F2")</td>
-                                <td>R @((claim.HoursWorked * claim.HourlyRate).ToString("F2"))</td>
+                                <td><strong>R @claim.TotalAmount.ToString("F2")</strong></td>
                                 <td>@(string.IsNullOrEmpty(claim.Notes) ? "-" : claim.Notes)</td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(claim.DocumentPath))
@@ -51,33 +61,102 @@
                                     }
                                     else
                                     {
-                                        <span>-</span>
+                                        <span class="text-danger">Missing</span>
                                     }
                                 </td>
                                 <td>@claim.SubmittedDate.ToString("dd/MM/yyyy")</td>
                                 <td>
-                                    <div class="d-flex gap-2">
-                                        <form asp-action="ApproveClaim" method="post" style="display:inline;">
+                                    <div class="d-flex flex-column gap-1">
+                                        @if (claim.IsHoursValid)
+                                        {
+                                            <span class="badge bg-success">✓ Hours OK</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">✗ Hours Issue</span>
+                                        }
+
+                                        @if (claim.IsAmountValid)
+                                        {
+                                            <span class="badge bg-success">✓ Amount OK</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">✗ Amount Issue</span>
+                                        }
+
+                                        @if (claim.IsDocumentValid)
+                                        {
+                                            <span class="badge bg-success">✓ Doc OK</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">⚠ No Doc</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-2">
+                                        <form asp-action="ApproveClaim" method="post">
                                             <input type="hidden" name="claimId" value="@claim.ClaimId" />
-                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                            <button type="submit" class="btn btn-success btn-sm w-100">
+                                                <i class="bi bi-check-circle"></i> Approve
+                                            </button>
                                         </form>
-                                        <form asp-action="RejectClaim" method="post" style="display:inline;">
-                                            <input type="hidden" name="claimId" value="@claim.ClaimId" />
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this claim?');">Reject</button>
-                                        </form>
+                                        <button type="button" class="btn btn-danger btn-sm w-100"
+                                                data-bs-toggle="modal" data-bs-target="#rejectModal@(claim.ClaimId)">
+                                            <i class="bi bi-x-circle"></i> Reject
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- Reject Modal -->
+                            <div class="modal fade" id="rejectModal@(claim.ClaimId)" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Reject Claim</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form asp-action="RejectClaim" method="post">
+                                            <div class="modal-body">
+                                                <input type="hidden" name="claimId" value="@claim.ClaimId" />
+                                                <div class="mb-3">
+                                                    <label class="form-label">Rejection Reason:</label>
+                                                    <textarea name="rejectionReason" class="form-control" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="8" class="text-center text-muted">Awaiting claims </td>
+                            <td colspan="9" class="text-center text-muted">No claims awaiting coordinator approval</td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <!-- Automated Verification Legend -->
+    <div class="card shadow-sm p-3 mt-3">
+        <h5 class="fw-bold mb-3">Automated Verification Criteria:</h5>
+        <ul class="list-unstyled">
+            <li><span class="badge bg-success">Hours OK</span> - Hours between 0.1 and 200</li>
+            <li><span class="badge bg-success"> Amount OK</span> - Rate between R50-R1000, Total under R50,000</li>
+            <li><span class="badge bg-success"> Doc OK</span> - Supporting document uploaded</li>
+            <li><span class="badge bg-danger"></span> - Failed automated check</li>
+            <li><span class="badge bg-warning text-dark"></span> - Warning/Missing item</li>
+        </ul>
     </div>
 </div>
