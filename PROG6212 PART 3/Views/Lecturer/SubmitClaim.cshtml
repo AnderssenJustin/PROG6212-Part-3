@@ -1,0 +1,66 @@
+﻿@model PROG6212_PART_3.Models.Claim
+
+@{
+    ViewBag.Title = "Submit Claim";
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Please Submit Your Claim</h2>
+        <div class="mx-auto" style="height:5px; width:100px; background: linear-gradient(90deg, #0d6efd, #6610f2); border-radius:3px; margin-bottom:10px;"></div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm p-4">
+        <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="LecturerName" class="form-label"><strong>Name and Surname</strong></label>
+                <input asp-for="LecturerName" class="form-control" placeholder="Please enter your Name and Surname" />
+                <span asp-validation-for="LecturerName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="HoursWorked" class="form-label"><strong>Hours Worked</strong></label>
+                <input asp-for="HoursWorked" type="number" step="0.1" min="0" class="form-control" placeholder="Please enter number of hours" />
+                <span asp-validation-for="HoursWorked" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="HourlyRate" class="form-label"><strong>Hourly Rate</strong></label>
+                <input asp-for="HourlyRate" type="number" step="0.1" min="0" class="form-control" placeholder="Please enter your hourly rate" />
+                <span asp-validation-for="HourlyRate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Notes" class="form-label"><strong>Any Additional Notes</strong></label>
+                <textarea asp-for="Notes" rows="4" class="form-control" placeholder="Please enter any additional notes"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Upload Supporting Documentation</strong></label>
+                <input type="file" name="document" class="form-control" accept=".pdf,.docx,.xlsx" />
+                <small class="text-muted">Allowed formats: PDF, DOCX, XLSX,PNG (Max 5MB)</small>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-primary btn-lg shadow-sm">Submit Claim</button>
+                <a asp-action="Dashboard" class="btn btn-secondary btn-lg shadow-sm">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

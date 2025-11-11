@@ -1,0 +1,148 @@
+﻿@model List<PROG6212_PART_3.Models.Claim>
+
+@{
+    ViewBag.Title = "Lecturer Dashboard";
+    var approvedCount = Model?.Count(c => c.Status == "Approved") ?? 0;
+    var pendingCount = Model?.Count(c => c.Status == "Pending" || c.Status == "Co-Ordinater Approved") ?? 0;
+    var rejectedCount = Model?.Count(c => c.Status == "Rejected") ?? 0;
+    var totalCount = Model?.Count ?? 0;
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Lecturer Dashboard</h2>
+        <div class="mx-auto" style="height:5px; width:100px; background: linear-gradient(90deg, #0d6efd, #6610f2); border-radius:3px; margin-bottom:10px;"></div>
+        <p class="text-muted">Manage and track your claims efficiently in real-time</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <a href="/Lecturer/SubmitClaim" class="btn btn-primary btn-lg text-white fw-bold shadow-sm w-100">
+                <i class="bi bi-pencil-square me-2"></i> Submit Claim
+            </a>
+        </div>
+        <div class="col-md-6 mb-3">
+            <a href="/Lecturer/ClaimStatus" class="btn btn-outline-primary btn-lg fw-bold shadow-sm w-100">
+                <i class="bi bi-card-checklist me-2"></i> View Claim Status
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #198754, #0dcaf0);">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle-fill fs-1 mb-2"></i>
+                    <h5 class="card-title">Approved</h5>
+                    <p class="card-text fs-3">@approvedCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
+                <div class="card-body text-center">
+                    <i class="bi bi-hourglass-split fs-1 mb-2"></i>
+                    <h5 class="card-title">Pending</h5>
+                    <p class="card-text fs-3">@pendingCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #dc3545, #b71c1c);">
+                <div class="card-body text-center">
+                    <i class="bi bi-x-circle-fill fs-1 mb-2"></i>
+                    <h5 class="card-title">Rejected</h5>
+                    <p class="card-text fs-3">@rejectedCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #0d6efd, #6610f2);">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-text-fill fs-1 mb-2"></i>
+                    <h5 class="card-title">Total Claims</h5>
+                    <p class="card-text fs-3">@totalCount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h4 class="fw-bold text-center mb-3">Recent Claims Summary</h4>
+        <div class="mx-auto" style="height:3px; width:80px; background: linear-gradient(90deg, #0d6efd, #6610f2); border-radius:3px; margin-bottom:20px;"></div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Hours Worked</th>
+                                <th>Hourly Rate</th>
+                                <th>Total Amount</th>
+                                <th>Notes</th>
+                                <th>Documentation</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var claim in Model.OrderByDescending(c => c.SubmittedDate).Take(5))
+                                {
+                                    <tr>
+                                        <td>@claim.HoursWorked</td>
+                                        <td>R @claim.HourlyRate.ToString("F2")</td>
+                                        <td>R @((claim.HoursWorked * claim.HourlyRate).ToString("F2"))</td>
+                                        <td>@(string.IsNullOrEmpty(claim.Notes) ? "-" : claim.Notes)</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                                            {
+                                                <span class="badge bg-success">Uploaded</span>
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (claim.Status == "Pending")
+                                            {
+                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            }
+                                            else if (claim.Status == "ManagerPending")
+                                            {
+                                                <span class="badge bg-info text-dark">CoOrdinator Approved Awaitng Manager</span>
+                                            }
+                                            else if (claim.Status == "Approved")
+                                            {
+                                                <span class="badge bg-success">Approved</span>
+                                            }
+                                            else if (claim.Status == "Rejected")
+                                            {
+                                                <span class="badge bg-danger">Rejected</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No claims submitted yet. Click "Submit Claim" to get started!</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if (Model != null && Model.Count > 5)
+                {
+                    <div class="text-center mt-3">
+                        <a href="/Lecturer/ClaimStatus" class="btn btn-outline-primary">View All Claims</a>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>

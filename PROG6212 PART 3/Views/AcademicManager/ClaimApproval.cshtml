@@ -1,0 +1,84 @@
+﻿@model List<PROG6212_PART_3.Models.Claim>
+
+@{
+    ViewBag.Title = "Claim Approval - Academic Manager";
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Claim Approval - Academic Manager</h2>
+        <div class="mx-auto" style="height:5px; width:100px; background: linear-gradient(90deg, #0d6efd, #6610f2); border-radius:3px; margin-bottom:10px;"></div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm p-3">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Lecturer</th>
+                        <th>Hours Worked</th>
+                        <th>Hourly Rate</th>
+                        <th>Total Amount</th>
+                        <th>Notes</th>
+                        <th>Supporting Documentation</th>
+                        <th>Submitted Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var claim in Model)
+                        {
+                            <tr>
+                                <td>@claim.LecturerName</td>
+                                <td>@claim.HoursWorked</td>
+                                <td>R @claim.HourlyRate.ToString("F2")</td>
+                                <td>R @((claim.HoursWorked * claim.HourlyRate).ToString("F2"))</td>
+                                <td>@(string.IsNullOrEmpty(claim.Notes) ? "-" : claim.Notes)</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                                    {
+                                        <a href="@claim.DocumentPath" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>@claim.SubmittedDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+
+                                        <form asp-action="ApproveClaim" method="post" style="display:inline;">
+                                            <input type="hidden" name="claimId" value="@claim.ClaimId" />
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form asp-action="RejectClaim" method="post" style="display:inline;">
+                                            <input type="hidden" name="claimId" value="@claim.ClaimId" />
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this claim?');">Reject</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">No claims awaiting coordinator approval</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>﻿
