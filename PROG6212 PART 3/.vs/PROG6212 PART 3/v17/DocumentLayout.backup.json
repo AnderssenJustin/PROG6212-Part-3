@@ -3,12 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\programmecoordinator\\approveclaim.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\programmecoordinator\\approveclaim.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\academicmanager\\claimapproval.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\academicmanager\\claimapproval.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,27 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAACUAAAAAAAAAAAAkwD4AAAAHAAAAAAAAAA==",
+              "Title": "ClaimApproval.cshtml",
+              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\AcademicManager\\ClaimApproval.cshtml",
+              "RelativeDocumentMoniker": "Views\\AcademicManager\\ClaimApproval.cshtml",
+              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\AcademicManager\\ClaimApproval.cshtml*",
+              "RelativeToolTip": "Views\\AcademicManager\\ClaimApproval.cshtml*",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAAAGYAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-11T11:47:00.723Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ApproveClaim.cshtml",
-              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\ProgrammeCoOrdinator\\ApproveClaim.cshtml",
-              "RelativeDocumentMoniker": "Views\\ProgrammeCoOrdinator\\ApproveClaim.cshtml",
-              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\ProgrammeCoOrdinator\\ApproveClaim.cshtml",
-              "RelativeToolTip": "Views\\ProgrammeCoOrdinator\\ApproveClaim.cshtml",
-              "ViewState": "AgIAAHkAAAAAAAAAAAAUwJoAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-11T11:40:57.349Z",
+              "WhenOpened": "2025-11-14T08:09:45.09Z",
               "EditorCaption": ""
             }
           ]
