@@ -1,0 +1,203 @@
+﻿@model List<PROG6212_PART_3.Models.User>
+
+@{
+    ViewBag.Title = "Manage Users - HR Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">User Management Dashboard</h2>
+        <div class="mx-auto" style="height:5px; width:100px; background: linear-gradient(90deg, #0d6efd, #6610f2); border-radius:3px; margin-bottom:10px;"></div>
+        <p class="text-muted">Create, update, and manage all system users</p>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <a asp-action="CreateUser" class="btn btn-primary btn-lg shadow-sm">
+                <i class="bi bi-person-plus"></i> Create New User
+            </a>
+            <a asp-action="HRDashboard" class="btn btn-outline-secondary btn-lg shadow-sm">
+                <i class="bi bi-file-earmark-text"></i> View Reports
+            </a>
+        </div>
+        <div class="col-md-4 text-end">
+            <h5 class="text-muted">Total Users: @Model.Count</h5>
+        </div>
+    </div>
+
+    <div class="card shadow-sm p-3">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Hourly Rate</th>
+                        <th>Status</th>
+                        <th>Last Login</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Username</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    @if (user.Role == "HR")
+                                    {
+                                        <span class="badge bg-danger">HR</span>
+                                    }
+                                    else if (user.Role == "Lecturer")
+                                    {
+                                        <span class="badge bg-primary">Lecturer</span>
+                                    }
+                                    else if (user.Role == "ProgrammeCoordinator")
+                                    {
+                                        <span class="badge bg-warning text-dark">Coordinator</span>
+                                    }
+                                    else if (user.Role == "AcademicManager")
+                                    {
+                                        <span class="badge bg-success">Manager</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.Role == "Lecturer")
+                                    {
+                                        <text>R @user.HourlyRate.ToString("F2")</text>
+                                    }
+                                    else
+                                    {
+                                        <text>N/A</text>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.LastLogin.HasValue)
+                                    {
+                                        @user.LastLogin.Value.ToString("dd/MM/yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <text>Never</text>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="EditUser" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="ToggleUserStatus" asp-route-id="@user.UserId" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="@(user.IsActive ? "Deactivate" : "Activate")">
+                                                <i class="bi bi-@(user.IsActive ? "toggle-on" : "toggle-off")"></i>
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal@(user.UserId)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" id="deleteModal@(user.UserId)" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete user <strong>@user.FullName</strong>?</p>
+                                            <p class="text-danger"><i class="bi bi-exclamation-triangle"></i> This action cannot be undone!</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form asp-action="DeleteUser" asp-route-id="@user.UserId" method="post">
+                                                <button type="submit" class="btn btn-danger">Delete User</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">No users found</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Statistics -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #dc3545, #fd7e14);">
+                <div class="card-body text-center">
+                    <h6>HR Users</h6>
+                    <h3>@Model.Count(u => u.Role == "HR")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #0d6efd, #6610f2);">
+                <div class="card-body text-center">
+                    <h6>Lecturers</h6>
+                    <h3>@Model.Count(u => u.Role == "Lecturer")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
+                <div class="card-body text-center">
+                    <h6>Coordinators</h6>
+                    <h3>@Model.Count(u => u.Role == "ProgrammeCoordinator")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white shadow-sm border-0" style="background: linear-gradient(135deg, #198754, #0dcaf0);">
+                <div class="card-body text-center">
+                    <h6>Managers</h6>
+                    <h3>@Model.Count(u => u.Role == "AcademicManager")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

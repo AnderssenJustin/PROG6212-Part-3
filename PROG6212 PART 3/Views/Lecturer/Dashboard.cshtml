@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Lecturer Dashboard";
     var approvedCount = Model?.Count(c => c.Status == "Approved") ?? 0;
-    var pendingCount = Model?.Count(c => c.Status == "Pending" || c.Status == "Co-Ordinater Approved") ?? 0;
+    var pendingCount = Model?.Count(c => c.Status == "Pending" || c.Status == "ManagerPending") ?? 0;
     var rejectedCount = Model?.Count(c => c.Status == "Rejected") ?? 0;
     var totalCount = Model?.Count ?? 0;
 }
@@ -17,12 +17,12 @@
 
     <div class="row mb-4">
         <div class="col-md-6 mb-3">
-            <a href="/Lecturer/SubmitClaim" class="btn btn-primary btn-lg text-white fw-bold shadow-sm w-100">
+            <a asp-action="SubmitClaim" class="btn btn-primary btn-lg text-white fw-bold shadow-sm w-100">
                 <i class="bi bi-pencil-square me-2"></i> Submit Claim
             </a>
         </div>
         <div class="col-md-6 mb-3">
-            <a href="/Lecturer/ClaimStatus" class="btn btn-outline-primary btn-lg fw-bold shadow-sm w-100">
+            <a asp-action="ClaimStatus" class="btn btn-outline-primary btn-lg fw-bold shadow-sm w-100">
                 <i class="bi bi-card-checklist me-2"></i> View Claim Status
             </a>
         </div>
@@ -93,7 +93,7 @@
                                     <tr>
                                         <td>@claim.HoursWorked</td>
                                         <td>R @claim.HourlyRate.ToString("F2")</td>
-                                        <td>R @((claim.HoursWorked * claim.HourlyRate).ToString("F2"))</td>
+                                        <td><strong>R @claim.TotalAmount.ToString("F2")</strong></td>
                                         <td>@(string.IsNullOrEmpty(claim.Notes) ? "-" : claim.Notes)</td>
                                         <td>
                                             @if (!string.IsNullOrEmpty(claim.DocumentPath))
@@ -112,7 +112,7 @@
                                             }
                                             else if (claim.Status == "ManagerPending")
                                             {
-                                                <span class="badge bg-info text-dark">CoOrdinator Approved Awaitng Manager</span>
+                                                <span class="badge bg-info text-dark">Coordinator Approved</span>
                                             }
                                             else if (claim.Status == "Approved")
                                             {
@@ -138,11 +138,10 @@
                 @if (Model != null && Model.Count > 5)
                 {
                     <div class="text-center mt-3">
-                        <a href="/Lecturer/ClaimStatus" class="btn btn-outline-primary">View All Claims</a>
+                        <a asp-action="ClaimStatus" class="btn btn-outline-primary">View All Claims</a>
                     </div>
                 }
             </div>
         </div>
-
     </div>
 </div>

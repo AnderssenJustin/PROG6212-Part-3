@@ -6,14 +6,14 @@
 
 <div class="container mt-4">
     <div class="text-center mb-4">
-        <h2 class="fw-bold">Submitted Claims</h2>
+        <h2 class="fw-bold">My Submitted Claims</h2>
         <div class="mx-auto" style="height:5px; width:100px; background: linear-gradient(90deg, #0d6efd, #6610f2); border-radius:3px; margin-bottom:10px;"></div>
     </div>
 
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["Success"]
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
@@ -23,6 +23,7 @@
             <table class="table table-bordered table-striped table-hover align-middle">
                 <thead class="table-dark">
                     <tr>
+                        <th>Claim ID</th>
                         <th>Hours Worked</th>
                         <th>Hourly Rate</th>
                         <th>Total Amount</th>
@@ -30,6 +31,7 @@
                         <th>Documentation</th>
                         <th>Submitted Date</th>
                         <th>Status</th>
+                        <th>Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,46 +40,162 @@
                         @foreach (var claim in Model)
                         {
                             <tr>
+                                <td><strong>#@claim.ClaimId</strong></td>
                                 <td>@claim.HoursWorked</td>
                                 <td>R @claim.HourlyRate.ToString("F2")</td>
-                                <td>R @((claim.HoursWorked * claim.HourlyRate).ToString("F2"))</td>
+                                <td><strong>R @claim.TotalAmount.ToString("F2")</strong></td>
                                 <td>@(string.IsNullOrEmpty(claim.Notes) ? "-" : claim.Notes)</td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(claim.DocumentPath))
                                     {
-                                        <a href="@claim.DocumentPath" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="@claim.DocumentPath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-earmark"></i> View
+                                        </a>
                                     }
                                     else
                                     {
-                                        <span>-</span>
+                                        <span class="text-muted">-</span>
                                     }
                                 </td>
                                 <td>@claim.SubmittedDate.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     @if (claim.Status == "Pending")
                                     {
-                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-hourglass-split"></i> Pending
+                                        </span>
                                     }
                                     else if (claim.Status == "ManagerPending")
                                     {
-                                        <span class="badge bg-info text-dark">CoOrdinator Approved Awaitng Manager</span>
+                                        <span class="badge bg-info text-dark">
+                                            <i class="bi bi-check"></i> Coordinator Approved
+                                        </span>
                                     }
                                     else if (claim.Status == "Approved")
                                     {
-                                        <span class="badge bg-success">Approved</span>
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle"></i> Approved
+                                        </span>
                                     }
                                     else if (claim.Status == "Rejected")
                                     {
-                                        <span class="badge bg-danger">Rejected</span>
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle"></i> Rejected
+                                        </span>
                                     }
                                 </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                                            data-bs-toggle="modal" data-bs-target="#detailsModal@(claim.ClaimId)">
+                                        <i class="bi bi-info-circle"></i> Details
+                                    </button>
+                                </td>
                             </tr>
+
+                            <!-- Details Modal -->
+                            <div class="modal fade" id="detailsModal@(claim.ClaimId)" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title">Claim #@claim.ClaimId - Details</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <strong>Submitted Date:</strong>
+                                                    <p>@claim.SubmittedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <strong>Status:</strong>
+                                                    <p>
+                                                        @if (claim.Status == "Pending")
+                                                        {
+                                                            <span class="badge bg-warning text-dark">Awaiting Coordinator Approval</span>
+                                                        }
+                                                        else if (claim.Status == "ManagerPending")
+                                                        {
+                                                            <span class="badge bg-info text-dark">Awaiting Manager Approval</span>
+                                                        }
+                                                        else if (claim.Status == "Approved")
+                                                        {
+                                                            <span class="badge bg-success">Fully Approved</span>
+                                                        }
+                                                        else if (claim.Status == "Rejected")
+                                                        {
+                                                            <span class="badge bg-danger">Rejected</span>
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <hr />
+
+                                            <h6 class="fw-bold">Claim Information:</h6>
+                                            <table class="table table-sm">
+                                                <tr>
+                                                    <th width="40%">Hours Worked:</th>
+                                                    <td>@claim.HoursWorked hours</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Hourly Rate:</th>
+                                                    <td>R @claim.HourlyRate.ToString("F2")</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Total Amount:</th>
+                                                    <td><strong>R @claim.TotalAmount.ToString("F2")</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Notes:</th>
+                                                    <td>@(string.IsNullOrEmpty(claim.Notes) ? "No notes provided" : claim.Notes)</td>
+                                                </tr>
+                                            </table>
+
+                                            @if (claim.Status == "ManagerPending")
+                                            {
+                                                <div class="alert alert-info">
+                                                    <i class="bi bi-info-circle"></i> <strong>Approval Progress:</strong><br />
+                                                    ✅ Approved by Programme Coordinator on @claim.CoordinatorApprovedDate?.ToString("dd/MM/yyyy")<br />
+                                                    ⏳ Awaiting Academic Manager approval
+                                                </div>
+                                            }
+
+                                            @if (claim.Status == "Approved")
+                                            {
+                                                <div class="alert alert-success">
+                                                    <i class="bi bi-check-circle"></i> <strong>Fully Approved!</strong><br />
+                                                    ✅ Coordinator Approval: @claim.CoordinatorApprovedDate?.ToString("dd/MM/yyyy")<br />
+                                                    ✅ Manager Approval: @claim.ManagerApprovedDate?.ToString("dd/MM/yyyy")<br />
+                                                    Your claim is being processed for payment.
+                                                </div>
+                                            }
+
+                                            @if (claim.Status == "Rejected" && !string.IsNullOrEmpty(claim.RejectionReason))
+                                            {
+                                                <div class="alert alert-danger">
+                                                    <i class="bi bi-x-circle"></i> <strong>Rejection Reason:</strong><br />
+                                                    @claim.RejectionReason
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center text-muted">No claims submitted yet</td>
+                            <td colspan="9" class="text-center text-muted py-5">
+                                <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                <p>No claims submitted yet. Click "Submit Claim" to create your first claim!</p>
+                                <a asp-action="SubmitClaim" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle"></i> Submit New Claim
+                                </a>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -86,6 +204,8 @@
     </div>
 
     <div class="mt-3">
-        <a asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
+        <a asp-action="Dashboard" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
     </div>
 </div>

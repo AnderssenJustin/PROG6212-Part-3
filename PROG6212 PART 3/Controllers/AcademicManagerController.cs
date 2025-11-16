@@ -1,9 +1,11 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PROG6212_PART_3.Models;
+using PROG6212_PART_3.Helpers;
 
 namespace PROG6212_PART_3.Controllers
 {
+    [SessionAuthorize(Roles = new[] { "AcademicManager" })]
     public class AcademicManagerController : Controller
     {
         private readonly AppDbContext _context;
@@ -18,6 +20,7 @@ namespace PROG6212_PART_3.Controllers
         {
             // Show only claims approved by coordinator and pending manager approval
             var managerPendingClaims = _context.Claims
+                .Include(c => c.User)
                 .Where(c => c.Status == "ManagerPending")
                 .OrderByDescending(c => c.SubmittedDate)
                 .ToList();
@@ -51,16 +54,9 @@ namespace PROG6212_PART_3.Controllers
 
         private bool AutomatedHoursCheck(Claim claim)
         {
-            // Check if hours are within acceptable range
-            if (claim.HoursWorked < 0.1 || claim.HoursWorked > 200)
+            // Check if hours are within acceptable range (monthly limit is 180)
+            if (claim.HoursWorked < 0.1 || claim.HoursWorked > 180)
                 return false;
-
-            // Check if hours per day are reasonable (assuming max 16 hours/day)
-            if (claim.HoursWorked > 16)
-            {
-                // Flag for review but don't auto-reject
-                return true;
-            }
 
             return true;
         }
@@ -68,7 +64,7 @@ namespace PROG6212_PART_3.Controllers
         [HttpPost]
         public async Task<IActionResult> ApproveClaim(int claimId)
         {
-            var claim = await _context.Claims.FindAsync(claimId);
+            var claim = await _context.Claims.Include(c => c.User).FirstOrDefaultAsync(c => c.ClaimId == claimId);
 
             if (claim != null && claim.Status == "ManagerPending")
             {
@@ -82,6 +78,9 @@ namespace PROG6212_PART_3.Controllers
                 }
 
                 claim.Status = "Approved"; // Final approval
+                claim.ManagerApprovedDate = DateTime.Now;
+                claim.ApprovedByManager = HttpContext.Session.GetFullName();
+
                 await _context.SaveChangesAsync();
 
                 TempData["Success"] = "Claim approved and finalized!";
@@ -122,80 +121,19 @@ namespace PROG6212_PART_3.Controllers
                 return (false, "Amount or rate outside acceptable range");
             }
 
-            // Check 3: Hours validation
+            // Check 3: Hours validation (180 hour monthly limit)
             if (!AutomatedHoursCheck(claim))
             {
-                return (false, "Hours worked outside acceptable range");
+                return (false, "Hours worked outside acceptable range (max 180 hours per month)");
             }
 
-            // Check 4: Lecturer name validation
-            if (string.IsNullOrWhiteSpace(claim.LecturerName))
+            // Check 4: User validation
+            if (claim.User == null)
             {
-                return (false, "Lecturer name is required");
+                return (false, "User information is required");
             }
 
             return (true, "All checks passed");
         }
     }
 }
-
-
-
-
-
-
-
-
-/*using System;
-using Microsoft.AspNetCore.Mvc;
-using PROG6212_PART_3.Models;
-
-namespace PROG6212_PART_3.Controllers
-{
-    public class AcademicManagerController : Controller
-    {
-        private readonly AppDbContext _context;
-
-        public AcademicManagerController(AppDbContext context)
-        {
-            _context = context;
-        }
-
-        public IActionResult ClaimApproval()
-        {
-            // Show only claims approved by coordinator and pending manager approval
-            var managerPendingClaims = _context.Claims
-                .Where(c => c.Status == "ManagerPending")
-                .OrderByDescending(c => c.SubmittedDate)
-                .ToList();
-
-            return View(managerPendingClaims);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ApproveClaim(int claimId)
-        {
-            var claim = await _context.Claims.FindAsync(claimId);
-            if (claim != null && claim.Status == "ManagerPending")
-            {
-                claim.Status = "Approved"; // Final approval
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Claim approved";
-            }
-            return RedirectToAction("ClaimApproval");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RejectClaim(int claimId)
-        {
-            var claim = await _context.Claims.FindAsync(claimId);
-            if (claim != null && claim.Status == "ManagerPending")
-            {
-                claim.Status = "Rejected";
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Claim rejected!";
-            }
-            return RedirectToAction("ClaimApproval");
-        }
-    }
-}*/

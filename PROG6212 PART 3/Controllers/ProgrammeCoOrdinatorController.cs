@@ -1,10 +1,11 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PROG6212_PART_3.Models;
+using PROG6212_PART_3.Helpers;
 
 namespace PROG6212_PART_3.Controllers
 {
-
+    [SessionAuthorize(Roles = new[] { "ProgrammeCoordinator" })]
     public class ProgrammeCoOrdinatorController : Controller
     {
         private readonly AppDbContext _context;
@@ -18,6 +19,7 @@ namespace PROG6212_PART_3.Controllers
         public IActionResult ApproveClaim()
         {
             var coordinatorPendingClaims = _context.Claims
+                .Include(c => c.User)
                 .Where(c => c.Status == "Pending")
                 .OrderByDescending(c => c.SubmittedDate)
                 .ToList();
@@ -51,16 +53,9 @@ namespace PROG6212_PART_3.Controllers
 
         private bool AutomatedHoursCheck(Claim claim)
         {
-            // Check if hours are within acceptable range
-            if (claim.HoursWorked < 0.1 || claim.HoursWorked > 200)
+            // Check if hours are within acceptable range (monthly limit is 180)
+            if (claim.HoursWorked < 0.1 || claim.HoursWorked > 180)
                 return false;
-
-            // Check if hours per day are reasonable (assuming max 16 hours/day)
-            if (claim.HoursWorked > 16)
-            {
-                // Flag for review but don't auto-reject
-                return true;
-            }
 
             return true;
         }
@@ -68,7 +63,7 @@ namespace PROG6212_PART_3.Controllers
         [HttpPost]
         public async Task<IActionResult> ApproveClaim(int claimId)
         {
-            var claim = await _context.Claims.FindAsync(claimId);
+            var claim = await _context.Claims.Include(c => c.User).FirstOrDefaultAsync(c => c.ClaimId == claimId);
 
             if (claim != null && claim.Status == "Pending")
             {
@@ -82,6 +77,9 @@ namespace PROG6212_PART_3.Controllers
                 }
 
                 claim.Status = "ManagerPending";
+                claim.CoordinatorApprovedDate = DateTime.Now;
+                claim.ApprovedByCoordinator = HttpContext.Session.GetFullName();
+
                 await _context.SaveChangesAsync();
 
                 TempData["Success"] = "Claim approved and sent to Academic Manager!";
@@ -122,20 +120,19 @@ namespace PROG6212_PART_3.Controllers
                 return (false, "Amount or rate outside acceptable range");
             }
 
-            // Check 3: Hours validation
+            // Check 3: Hours validation (180 hour monthly limit)
             if (!AutomatedHoursCheck(claim))
             {
-                return (false, "Hours worked outside acceptable range");
+                return (false, "Hours worked outside acceptable range (max 180 hours per month)");
             }
 
-            // Check 4: Lecturer name validation
-            if (string.IsNullOrWhiteSpace(claim.LecturerName))
+            // Check 4: User validation
+            if (claim.User == null)
             {
-                return (false, "Lecturer name is required");
+                return (false, "User information is required");
             }
 
             return (true, "All checks passed");
         }
     }
-
 }

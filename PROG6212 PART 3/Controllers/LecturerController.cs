@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PROG6212_PART_3.Models;
-using PROG6212_PART_3;
+using PROG6212_PART_3.Helpers;
 
-namespace Prog6212_POE_ST10340607.Controllers
+namespace PROG6212_PART_3.Controllers
 {
+    [SessionAuthorize(Roles = new[] { "Lecturer" })]
     public class LecturerController : Controller
     {
         private readonly AppDbContext _context;
@@ -17,25 +19,51 @@ namespace Prog6212_POE_ST10340607.Controllers
 
         public IActionResult Dashboard()
         {
-            var claims = _context.Claims.OrderByDescending(c => c.SubmittedDate).ToList();
+            var userId = HttpContext.Session.GetUserId();
+            var claims = _context.Claims
+                .Include(c => c.User)
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.SubmittedDate)
+                .ToList();
+
             return View(claims);
         }
 
         public IActionResult SubmitClaim()
         {
+            // Get current user info to display
+            var userId = HttpContext.Session.GetUserId();
+            var user = _context.Users.Find(userId);
+
+            ViewBag.LecturerName = user?.FullName;
+            ViewBag.HourlyRate = user?.HourlyRate;
+
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitClaim(PROG6212_PART_3.Models.Claim claim, IFormFile? document)
+        public async Task<IActionResult> SubmitClaim(Claim claim, IFormFile? document)
         {
+            // Get current user
+            var userId = HttpContext.Session.GetUserId();
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                TempData["Error"] = "User not found. Please log in again.";
+                return RedirectToAction("Index", "Login");
+            }
+
+            // Auto-populate user information
+            claim.UserId = user.UserId;
+
             // Automated validation checks
             var validationErrors = new List<string>();
 
-            // Check hours worked
-            if (claim.HoursWorked < 0.1 || claim.HoursWorked > 200)
+            // Check hours worked - MUST be between 0.1 and 180 (monthly limit)
+            if (claim.HoursWorked < 0.1 || claim.HoursWorked > 180)
             {
-                validationErrors.Add("Hours worked must be between 0.1 and 200");
+                validationErrors.Add("Hours worked must be between 0.1 and 180 (monthly limit)");
                 claim.IsHoursValid = false;
             }
             else
@@ -43,24 +71,18 @@ namespace Prog6212_POE_ST10340607.Controllers
                 claim.IsHoursValid = true;
             }
 
-            // Check hourly rate
-            if (claim.HourlyRate < 50 || claim.HourlyRate > 1000)
+            // Auto-calculate total amount using user's hourly rate
+            var totalAmount = claim.HoursWorked * user.HourlyRate;
+
+            // Check if total amount is reasonable
+            if (totalAmount > 50000)
             {
-                validationErrors.Add("Hourly rate must be between R50 and R1000");
+                validationErrors.Add("Total claim amount exceeds maximum limit of R50,000");
                 claim.IsAmountValid = false;
             }
             else
             {
                 claim.IsAmountValid = true;
-            }
-
-            // Auto-calculate total amount
-            var totalAmount = claim.HoursWorked * claim.HourlyRate;
-
-            // Check if total amount is reasonable (automated business rule)
-            if (totalAmount > 50000)
-            {
-                validationErrors.Add("Total claim amount exceeds maximum limit of R50,000");
             }
 
             if (validationErrors.Any())
@@ -69,8 +91,15 @@ namespace Prog6212_POE_ST10340607.Controllers
                 {
                     ModelState.AddModelError("", error);
                 }
+                ViewBag.LecturerName = user.FullName;
+                ViewBag.HourlyRate = user.HourlyRate;
                 return View(claim);
             }
+
+            // Remove validation for fields that are auto-populated
+            ModelState.Remove("UserId");
+            ModelState.Remove("User");
+            ModelState.Remove("LecturerName");
 
             if (ModelState.IsValid)
             {
@@ -80,6 +109,8 @@ namespace Prog6212_POE_ST10340607.Controllers
                     if (document.Length > 5 * 1024 * 1024)
                     {
                         ModelState.AddModelError("", "File size cannot exceed 5MB");
+                        ViewBag.LecturerName = user.FullName;
+                        ViewBag.HourlyRate = user.HourlyRate;
                         return View(claim);
                     }
 
@@ -90,6 +121,8 @@ namespace Prog6212_POE_ST10340607.Controllers
                     {
                         ModelState.AddModelError("", "Only PDF, DOCX, XLSX, PNG, JPG files are allowed");
                         claim.IsDocumentValid = false;
+                        ViewBag.LecturerName = user.FullName;
+                        ViewBag.HourlyRate = user.HourlyRate;
                         return View(claim);
                     }
 
@@ -108,6 +141,10 @@ namespace Prog6212_POE_ST10340607.Controllers
 
                     claim.DocumentPath = "/uploads/" + uniqueFileName;
                 }
+                else
+                {
+                    claim.IsDocumentValid = false;
+                }
 
                 claim.Status = "Pending";
                 claim.SubmittedDate = DateTime.Now;
@@ -119,14 +156,21 @@ namespace Prog6212_POE_ST10340607.Controllers
                 return RedirectToAction("ClaimStatus");
             }
 
+            ViewBag.LecturerName = user.FullName;
+            ViewBag.HourlyRate = user.HourlyRate;
             return View(claim);
         }
 
         public IActionResult ClaimStatus()
         {
-            var claims = _context.Claims.OrderByDescending(c => c.SubmittedDate).ToList();
+            var userId = HttpContext.Session.GetUserId();
+            var claims = _context.Claims
+                .Include(c => c.User)
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.SubmittedDate)
+                .ToList();
+
             return View(claims);
         }
     }
-
 }

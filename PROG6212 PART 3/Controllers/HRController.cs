@@ -1,9 +1,14 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PROG6212_PART_3.Models;
+using PROG6212_PART_3.Models.ViewModels;
+using PROG6212_PART_3.Helpers;
+
 
 namespace PROG6212_PART_3.Controllers
 {
+    [SessionAuthorize(Roles = new[] { "HR" })]
     public class HRController : Controller
     {
         private readonly AppDbContext _context;
@@ -13,65 +18,237 @@ namespace PROG6212_PART_3.Controllers
             _context = context;
         }
 
+        // User Management Dashboard
+        public IActionResult ManageUsers()
+        {
+            var users = _context.Users.OrderBy(u => u.Role).ThenBy(u => u.LastName).ToList();
+            return View(users);
+        }
+
+        // GET: Create User
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+        // POST: Create User
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateUser(UserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Check if username already exists
+                if (_context.Users.Any(u => u.Username == model.Username))
+                {
+                    ModelState.AddModelError("Username", "Username already exists");
+                    return View(model);
+                }
+
+                // Check if email already exists
+                if (_context.Users.Any(u => u.Email == model.Email))
+                {
+                    ModelState.AddModelError("Email", "Email already exists");
+                    return View(model);
+                }
+
+                var user = new User
+                {
+                    Username = model.Username,
+                    PasswordHash = model.Password,
+                    Role = model.Role,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    HourlyRate = model.HourlyRate,
+                    IsActive = model.IsActive,
+                    CreatedDate = DateTime.Now
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = $"User {user.FullName} created successfully! Login details: Username: {user.Username}";
+                return RedirectToAction("ManageUsers");
+            }
+
+            return View(model);
+        }
+
+        // GET: Edit User
+        public IActionResult EditUser(int id)
+        {
+            var user = _context.Users.Find(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new UserViewModel
+            {
+                UserId = user.UserId,
+                Username = user.Username,
+                Role = user.Role,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                HourlyRate = user.HourlyRate,
+                IsActive = user.IsActive
+            };
+
+            return View(model);
+        }
+
+        // POST: Edit User
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUser(UserViewModel model)
+        {
+            // Remove password validation for edit
+            ModelState.Remove("Password");
+
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Users.FindAsync(model.UserId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                // Check if username already exists (excluding current user)
+                if (_context.Users.Any(u => u.Username == model.Username && u.UserId != model.UserId))
+                {
+                    ModelState.AddModelError("Username", "Username already exists");
+                    return View(model);
+                }
+
+                // Check if email already exists (excluding current user)
+                if (_context.Users.Any(u => u.Email == model.Email && u.UserId != model.UserId))
+                {
+                    ModelState.AddModelError("Email", "Email already exists");
+                    return View(model);
+                }
+
+                user.Username = model.Username;
+                user.Role = model.Role;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.HourlyRate = model.HourlyRate;
+                user.IsActive = model.IsActive;
+
+                // Update password only if provided
+                if (!string.IsNullOrEmpty(model.Password))
+                {
+                    user.PasswordHash = model.Password;
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"User {user.FullName} updated successfully!";
+                return RedirectToAction("ManageUsers");
+            }
+
+            return View(model);
+        }
+
+        // POST: Delete User
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user != null)
+            {
+                // Don't allow deleting yourself
+                var currentUserId = HttpContext.Session.GetUserId();
+                if (user.UserId == currentUserId)
+                {
+                    TempData["Error"] = "You cannot delete your own account!";
+                    return RedirectToAction("ManageUsers");
+                }
+
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"User {user.FullName} deleted successfully!";
+            }
+
+            return RedirectToAction("ManageUsers");
+        }
+
+        // POST: Toggle User Active Status
+        [HttpPost]
+        public async Task<IActionResult> ToggleUserStatus(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user != null)
+            {
+                user.IsActive = !user.IsActive;
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"User {user.FullName} status updated to {(user.IsActive ? "Active" : "Inactive")}";
+            }
+
+            return RedirectToAction("ManageUsers");
+        }
+
+        // HR Dashboard - Reports
         public IActionResult HRDashboard()
         {
             var approvedClaims = _context.Claims
+                .Include(c => c.User)
                 .Where(c => c.Status == "Approved")
-                .OrderByDescending(c => c.ApprovedDate ?? c.SubmittedDate)
+                .OrderByDescending(c => c.ManagerApprovedDate ?? c.SubmittedDate)
                 .ToList();
 
             return View(approvedClaims);
         }
 
-        // Automated invoice generation
+        // Generate Invoice
         public IActionResult GenerateInvoice(int claimId)
         {
-            var claim = _context.Claims.Find(claimId);
+            var claim = _context.Claims.Include(c => c.User).FirstOrDefault(c => c.ClaimId == claimId);
 
             if (claim == null || claim.Status != "Approved")
             {
                 TempData["Error"] = "Claim not found or not approved";
-                return RedirectToAction("Dashboard");
+                return RedirectToAction("HRDashboard");
             }
 
             var invoice = GenerateInvoiceReport(claim);
-
             var bytes = Encoding.UTF8.GetBytes(invoice);
             return File(bytes, "text/plain", $"Invoice_{claim.ClaimId}_{DateTime.Now:yyyyMMdd}.txt");
         }
 
-        // Automated report generation
+        // Generate Monthly Report
         public IActionResult GenerateMonthlyReport()
         {
             var currentMonth = DateTime.Now.Month;
             var currentYear = DateTime.Now.Year;
 
             var claims = _context.Claims
+                .Include(c => c.User)
                 .Where(c => c.Status == "Approved"
                     && c.SubmittedDate.Month == currentMonth
                     && c.SubmittedDate.Year == currentYear)
                 .ToList();
 
             var report = GeneratePaymentReport(claims, currentMonth, currentYear);
-
             var bytes = Encoding.UTF8.GetBytes(report);
             return File(bytes, "text/plain", $"Monthly_Report_{currentYear}_{currentMonth:D2}.txt");
         }
 
-        // Generate summary report for all approved claims
+        // Generate Summary Report
         public IActionResult GenerateSummaryReport()
         {
             var approvedClaims = _context.Claims
+                .Include(c => c.User)
                 .Where(c => c.Status == "Approved")
                 .ToList();
 
             var report = GenerateSummaryReportContent(approvedClaims);
-
             var bytes = Encoding.UTF8.GetBytes(report);
             return File(bytes, "text/plain", $"Summary_Report_{DateTime.Now:yyyyMMdd}.txt");
         }
 
-        // Helper method to generate invoice
+        // Helper methods
         private string GenerateInvoiceReport(Claim claim)
         {
             var sb = new StringBuilder();
@@ -83,14 +260,14 @@ namespace PROG6212_PART_3.Controllers
             sb.AppendLine($"Invoice Date: {DateTime.Now:dd/MM/yyyy}");
             sb.AppendLine();
             sb.AppendLine("LECTURER DETAILS:");
-            sb.AppendLine($"Name: {claim.LecturerName}");
+            sb.AppendLine($"Name: {claim.User.FullName}");
+            sb.AppendLine($"Email: {claim.User.Email}");
             sb.AppendLine();
             sb.AppendLine("CLAIM DETAILS:");
             sb.AppendLine($"Claim ID: {claim.ClaimId}");
             sb.AppendLine($"Hours Worked: {claim.HoursWorked}");
             sb.AppendLine($"Hourly Rate: R{claim.HourlyRate:F2}");
             sb.AppendLine($"Submitted Date: {claim.SubmittedDate:dd/MM/yyyy}");
-
             sb.AppendLine();
             sb.AppendLine("PAYMENT CALCULATION:");
             sb.AppendLine($"Total Amount: R{claim.TotalAmount:F2}");
@@ -102,7 +279,6 @@ namespace PROG6212_PART_3.Controllers
             return sb.ToString();
         }
 
-        // Helper method to generate monthly report
         private string GeneratePaymentReport(List<Claim> claims, int month, int year)
         {
             var sb = new StringBuilder();
@@ -118,7 +294,7 @@ namespace PROG6212_PART_3.Controllers
             sb.AppendLine("BREAKDOWN BY LECTURER:");
             sb.AppendLine("----------------------------------------");
 
-            var lecturerGroups = claims.GroupBy(c => c.LecturerName);
+            var lecturerGroups = claims.GroupBy(c => c.User.FullName);
 
             foreach (var group in lecturerGroups)
             {
@@ -133,11 +309,9 @@ namespace PROG6212_PART_3.Controllers
             }
 
             sb.AppendLine("========================================");
-
             return sb.ToString();
         }
 
-        // Helper method to generate summary report
         private string GenerateSummaryReportContent(List<Claim> claims)
         {
             var sb = new StringBuilder();
@@ -158,7 +332,7 @@ namespace PROG6212_PART_3.Controllers
             foreach (var claim in claims)
             {
                 sb.AppendLine($"Claim ID: {claim.ClaimId}");
-                sb.AppendLine($"  Lecturer: {claim.LecturerName}");
+                sb.AppendLine($"  Lecturer: {claim.User.FullName}");
                 sb.AppendLine($"  Hours: {claim.HoursWorked} | Rate: R{claim.HourlyRate:F2}");
                 sb.AppendLine($"  Amount: R{claim.TotalAmount:F2}");
                 sb.AppendLine($"  Date: {claim.SubmittedDate:dd/MM/yyyy}");
@@ -166,7 +340,6 @@ namespace PROG6212_PART_3.Controllers
             }
 
             sb.AppendLine("========================================");
-
             return sb.ToString();
         }
     }

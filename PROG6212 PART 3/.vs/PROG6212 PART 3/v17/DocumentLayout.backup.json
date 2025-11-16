@@ -3,8 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\academicmanager\\claimapproval.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\academicmanager\\claimapproval.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\models\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:models\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\views\\login\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:views\\login\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\models\\claim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:models\\claim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|c:\\users\\lab_services_student\\desktop\\prog6212-part-3\\prog6212 part 3\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F075B6CA-8313-42D9-A8D8-2F0BD4901CB6}|PROG6212 PART 3.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,19 +34,84 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ClaimApproval.cshtml",
-              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\AcademicManager\\ClaimApproval.cshtml",
-              "RelativeDocumentMoniker": "Views\\AcademicManager\\ClaimApproval.cshtml",
-              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\AcademicManager\\ClaimApproval.cshtml*",
-              "RelativeToolTip": "Views\\AcademicManager\\ClaimApproval.cshtml*",
-              "ViewState": "AgIAAFoAAAAAAAAAAAAAAGYAAABTAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Login\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Login\\Index.cshtml",
+              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Views\\Login\\Index.cshtml",
+              "RelativeToolTip": "Views\\Login\\Index.cshtml",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAEQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-14T08:09:45.09Z",
+              "WhenOpened": "2025-11-16T19:57:32.819Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LoginController.cs",
+              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Controllers\\LoginController.cs",
+              "RelativeDocumentMoniker": "Controllers\\LoginController.cs",
+              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Controllers\\LoginController.cs",
+              "RelativeToolTip": "Controllers\\LoginController.cs",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAowGgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T19:57:11.155Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Claim.cs",
+              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Models\\Claim.cs",
+              "RelativeDocumentMoniker": "Models\\Claim.cs",
+              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Models\\Claim.cs",
+              "RelativeToolTip": "Models\\Claim.cs",
+              "ViewState": "AgIAADUAAAAAAAAAAAAmwEUAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T19:47:12.655Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAswA0AAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T19:46:53.047Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Models\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Models\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Models\\AppDbContext.cs",
+              "RelativeToolTip": "Models\\AppDbContext.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAkwCsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T19:45:04.087Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\lab_services_student\\Desktop\\PROG6212-Part-3\\PROG6212 PART 3\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T19:42:23.144Z",
               "EditorCaption": ""
             }
           ]

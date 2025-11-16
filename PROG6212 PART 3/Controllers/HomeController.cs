@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using PROG6212_PART_3.Models;
-
+using PROG6212_PART_3.Models.ViewModels;
 namespace PROG6212_PART_3.Controllers
 {
     public class HomeController : Controller

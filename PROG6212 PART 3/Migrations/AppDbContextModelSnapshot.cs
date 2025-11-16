@@ -23,14 +23,19 @@ namespace PROG6212_PART_3.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("ApprovedDate")
+                    b.Property<string>("ApprovedByCoordinator")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApprovedByManager")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CoordinatorApprovedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DocumentPath")
                         .HasColumnType("TEXT");
-
-                    b.Property<double>("HourlyRate")
-                        .HasColumnType("REAL");
 
                     b.Property<double>("HoursWorked")
                         .HasColumnType("REAL");
@@ -44,9 +49,7 @@ namespace PROG6212_PART_3.Migrations
                     b.Property<bool>("IsHoursValid")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("LecturerName")
-                        .IsRequired()
-                        .HasMaxLength(100)
+                    b.Property<DateTime?>("ManagerApprovedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
@@ -54,18 +57,109 @@ namespace PROG6212_PART_3.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RejectionReason")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("SubmittedDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ClaimId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Claims");
+                });
+
+            modelBuilder.Entity("PROG6212_PART_3.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("HourlyRate")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            CreatedDate = new DateTime(2025, 11, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "hr@university.edu",
+                            FirstName = "HR",
+                            HourlyRate = 0.0,
+                            IsActive = true,
+                            LastName = "Administrator",
+                            PasswordHash = "HR@2025",
+                            Role = "HR",
+                            Username = "hradmin"
+                        });
+                });
+
+            modelBuilder.Entity("PROG6212_PART_3.Models.Claim", b =>
+                {
+                    b.HasOne("PROG6212_PART_3.Models.User", "User")
+                        .WithMany("Claims")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PROG6212_PART_3.Models.User", b =>
+                {
+                    b.Navigation("Claims");
                 });
 #pragma warning restore 612, 618
         }

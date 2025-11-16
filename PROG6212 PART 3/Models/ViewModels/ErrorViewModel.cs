@@ -1,4 +1,4 @@
-namespace PROG6212_PART_3.Models
+namespace PROG6212_PART_3.Models.ViewModels
 {
     public class ErrorViewModel
     {

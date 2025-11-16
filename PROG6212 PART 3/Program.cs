@@ -1,40 +1,81 @@
 using Microsoft.EntityFrameworkCore;
 using PROG6212_PART_3.Models;
 
-namespace PROG6212_PART_3
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+// Add SQLite Database
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add Session Support (REQUIRED for authentication)
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
 {
-    public class Program
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Session timeout
+    options.Cookie.HttpOnly = true; // Security - prevent JavaScript access
+    options.Cookie.IsEssential = true; // Required for GDPR compliance
+});
+
+// Add HttpContextAccessor for accessing session in controllers
+builder.Services.AddHttpContextAccessor();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+// IMPORTANT: Enable Session Middleware (must be before UseAuthorization)
+app.UseSession();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Login}/{action=Index}/{id?}");
+
+// Seed default HR user on first run
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    // Ensure database is created
+    context.Database.EnsureCreated();
+
+    // Seed default HR user if no users exist
+    if (!context.Users.Any())
     {
-        public static void Main(string[] args)
+        var hrUser = new User
         {
-            var builder = WebApplication.CreateBuilder(args);
+            Username = "hradmin",
+            PasswordHash = "HR@2025",
+            Role = "HR",
+            FirstName = "HR",
+            LastName = "Administrator",
+            Email = "hr@university.edu",
+            HourlyRate = 0,
+            IsActive = true,
+            CreatedDate = DateTime.Now
+        };
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<AppDbContext>(options =>
-               options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-            var app = builder.Build();
+        context.Users.Add(hrUser);
+        context.SaveChanges();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapStaticAssets();
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Lecturer}/{action=Dashboard}/{id?}")
-                .WithStaticAssets();
-
-            app.Run();
-        }
+        Console.WriteLine("Default HR user created:");
+        Console.WriteLine("Username: hradmin");
+        Console.WriteLine("Password: HR@2025");
     }
 }
+
+app.Run();
