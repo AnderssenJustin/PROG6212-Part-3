@@ -1,10 +1,10 @@
-﻿using System.Text;
+﻿
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PROG6212_PART_3.Models;
 using PROG6212_PART_3.Models.ViewModels;
 using PROG6212_PART_3.Helpers;
-
 
 namespace PROG6212_PART_3.Controllers
 {
@@ -36,6 +36,10 @@ namespace PROG6212_PART_3.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUser(UserViewModel model)
         {
+           
+
+           
+
             if (ModelState.IsValid)
             {
                 // Check if username already exists
@@ -52,11 +56,16 @@ namespace PROG6212_PART_3.Controllers
                     return View(model);
                 }
 
+                // Map the display role to database role
+                string dbRole = MapDisplayRoleToDbRole(model.Role);
+
+                
+
                 var user = new User
                 {
                     Username = model.Username,
                     PasswordHash = model.Password,
-                    Role = model.Role,
+                    Role = dbRole, 
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
@@ -65,11 +74,19 @@ namespace PROG6212_PART_3.Controllers
                     CreatedDate = DateTime.Now
                 };
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Users.Add(user);
+                    await _context.SaveChangesAsync();
 
-                TempData["Success"] = $"User {user.FullName} created successfully! Login details: Username: {user.Username}";
-                return RedirectToAction("ManageUsers");
+                    TempData["Success"] = $"User {user.FullName} created successfully as {model.Role}! Username: {user.Username}";
+                    return RedirectToAction("ManageUsers");
+                }
+                catch (Exception ex)
+                {
+                    
+                    ModelState.AddModelError("", $"Error creating user: {ex.Message}");
+                }
             }
 
             return View(model);
@@ -88,7 +105,7 @@ namespace PROG6212_PART_3.Controllers
             {
                 UserId = user.UserId,
                 Username = user.Username,
-                Role = user.Role,
+                Role = MapDbRoleToDisplayRole(user.Role), 
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -115,14 +132,14 @@ namespace PROG6212_PART_3.Controllers
                     return NotFound();
                 }
 
-                // Check if username already exists (excluding current user)
+                // Check if username already exists 
                 if (_context.Users.Any(u => u.Username == model.Username && u.UserId != model.UserId))
                 {
                     ModelState.AddModelError("Username", "Username already exists");
                     return View(model);
                 }
 
-                // Check if email already exists (excluding current user)
+                // Check if email already exists 
                 if (_context.Users.Any(u => u.Email == model.Email && u.UserId != model.UserId))
                 {
                     ModelState.AddModelError("Email", "Email already exists");
@@ -130,7 +147,7 @@ namespace PROG6212_PART_3.Controllers
                 }
 
                 user.Username = model.Username;
-                user.Role = model.Role;
+                user.Role = MapDisplayRoleToDbRole(model.Role); // Map the role
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Email;
@@ -158,7 +175,6 @@ namespace PROG6212_PART_3.Controllers
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
-                // Don't allow deleting yourself
                 var currentUserId = HttpContext.Session.GetUserId();
                 if (user.UserId == currentUserId)
                 {
@@ -174,7 +190,7 @@ namespace PROG6212_PART_3.Controllers
             return RedirectToAction("ManageUsers");
         }
 
-        // POST: Toggle User Active Status
+        // POST: Toggle User Status
         [HttpPost]
         public async Task<IActionResult> ToggleUserStatus(int id)
         {
@@ -189,7 +205,7 @@ namespace PROG6212_PART_3.Controllers
             return RedirectToAction("ManageUsers");
         }
 
-        // HR Dashboard - Reports
+        // HR Dashboard
         public IActionResult HRDashboard()
         {
             var approvedClaims = _context.Claims
@@ -248,7 +264,44 @@ namespace PROG6212_PART_3.Controllers
             return File(bytes, "text/plain", $"Summary_Report_{DateTime.Now:yyyyMMdd}.txt");
         }
 
-        // Helper methods
+        // HELPER METHODS
+
+        // Map display role (from dropdown) to database role
+        private string MapDisplayRoleToDbRole(string displayRole)
+        {
+            // Trim any whitespace
+            displayRole = displayRole?.Trim() ?? "";
+
+            var mapping = displayRole switch
+            {
+                "HR (Super User)" => "HR",
+                "Programme Coordinator" => "ProgrammeCoordinator",
+                "Academic Manager" => "AcademicManager",
+                "Lecturer" => "Lecturer",
+                // Also handle if they come in already formatted
+                "HR" => "HR",
+                "ProgrammeCoordinator" => "ProgrammeCoordinator",
+                "AcademicManager" => "AcademicManager",
+                _ => displayRole // Return as-is if no mapping found
+            };
+
+            System.Diagnostics.Debug.WriteLine($"Mapping '{displayRole}' -> '{mapping}'");
+            return mapping;
+        }
+
+        // Map database role to display role 
+        private string MapDbRoleToDisplayRole(string dbRole)
+        {
+            return dbRole switch
+            {
+                "HR" => "HR (Super User)",
+                "ProgrammeCoordinator" => "Programme Coordinator",
+                "AcademicManager" => "Academic Manager",
+                "Lecturer" => "Lecturer",
+                _ => dbRole 
+            };
+        }
+
         private string GenerateInvoiceReport(Claim claim)
         {
             var sb = new StringBuilder();

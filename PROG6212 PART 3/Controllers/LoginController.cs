@@ -14,7 +14,7 @@ namespace PROG6212_PART_3.Controllers
             _context = context;
         }
 
-        // GET: Login
+        
         [HttpGet]
         public IActionResult Index()
         {
@@ -28,7 +28,7 @@ namespace PROG6212_PART_3.Controllers
             return View();
         }
 
-        // POST: Login
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Index(LoginViewModel model)
@@ -73,7 +73,7 @@ namespace PROG6212_PART_3.Controllers
             return RedirectToDashboard(user.Role);
         }
 
-        // Logout
+       
         [HttpPost]
         public IActionResult Logout()
         {
@@ -82,7 +82,7 @@ namespace PROG6212_PART_3.Controllers
             return RedirectToAction("Index", "Login");
         }
 
-        // Access Denied
+        
         public IActionResult AccessDenied()
         {
             return View();

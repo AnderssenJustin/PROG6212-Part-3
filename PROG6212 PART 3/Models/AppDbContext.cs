@@ -32,7 +32,7 @@ namespace PROG6212_PART_3.Models
                     Role = "HR",
                     FirstName = "HR",
                     LastName = "Administrator",
-                    Email = "hr@university.edu",
+                    Email = "hr@1.com",
                     HourlyRate = 0,
                     IsActive = true,
                     CreatedDate = new DateTime(2025,11,16)

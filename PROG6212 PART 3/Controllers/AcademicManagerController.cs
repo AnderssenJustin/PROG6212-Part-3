@@ -54,7 +54,7 @@ namespace PROG6212_PART_3.Controllers
 
         private bool AutomatedHoursCheck(Claim claim)
         {
-            // Check if hours are within acceptable range (monthly limit is 180)
+            // Check if hours are within acceptable range 
             if (claim.HoursWorked < 0.1 || claim.HoursWorked > 180)
                 return false;
 

@@ -47,14 +47,14 @@ CREATE TABLE [Claims] (
 IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'UserId', N'CreatedDate', N'Email', N'FirstName', N'HourlyRate', N'IsActive', N'LastLogin', N'LastName', N'PasswordHash', N'Role', N'Username') AND [object_id] = OBJECT_ID(N'[Users]'))
     SET IDENTITY_INSERT [Users] ON;
 INSERT INTO [Users] ([UserId], [CreatedDate], [Email], [FirstName], [HourlyRate], [IsActive], [LastLogin], [LastName], [PasswordHash], [Role], [Username])
-VALUES (1, '2025-11-16T00:00:00.0000000', N'hr@university.edu', N'HR', 0.0E0, CAST(1 AS bit), NULL, N'Administrator', N'HR@2025', N'HR', N'hradmin');
+VALUES (1, '2025-11-16T00:00:00.0000000', N'hr@1.com', N'HR', 0.0E0, CAST(1 AS bit), NULL, N'Administrator', N'HR@2025', N'HR', N'hradmin');
 IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'UserId', N'CreatedDate', N'Email', N'FirstName', N'HourlyRate', N'IsActive', N'LastLogin', N'LastName', N'PasswordHash', N'Role', N'Username') AND [object_id] = OBJECT_ID(N'[Users]'))
     SET IDENTITY_INSERT [Users] OFF;
 
 CREATE INDEX [IX_Claims_UserId] ON [Claims] ([UserId]);
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20251121101706_InitialSqlMigration', N'9.0.11');
+VALUES (N'20251121120313_InitialSqlMigration', N'9.0.11');
 
 COMMIT;
 GO

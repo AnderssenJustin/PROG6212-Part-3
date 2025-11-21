@@ -144,7 +144,7 @@ namespace PROG6212_PART_3.Migrations
                         {
                             UserId = 1,
                             CreatedDate = new DateTime(2025, 11, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "hr@university.edu",
+                            Email = "hr@1.com",
                             FirstName = "HR",
                             HourlyRate = 0.0,
                             IsActive = true,

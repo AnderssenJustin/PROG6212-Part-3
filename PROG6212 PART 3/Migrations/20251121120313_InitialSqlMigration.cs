@@ -68,7 +68,7 @@ namespace PROG6212_PART_3.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "CreatedDate", "Email", "FirstName", "HourlyRate", "IsActive", "LastLogin", "LastName", "PasswordHash", "Role", "Username" },
-                values: new object[] { 1, new DateTime(2025, 11, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "hr@university.edu", "HR", 0.0, true, null, "Administrator", "HR@2025", "HR", "hradmin" });
+                values: new object[] { 1, new DateTime(2025, 11, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "hr@1.com", "HR", 0.0, true, null, "Administrator", "HR@2025", "HR", "hradmin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Claims_UserId",

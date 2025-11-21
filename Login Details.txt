@@ -1,0 +1,21 @@
+HR 
+Username- Jenny
+Password- J12345
+Username -hradmin
+password -HR@2025
+
+
+Lecturer
+Username - Tim 
+Password - T12345
+
+
+
+Programme Co Ordinator 
+Username -  Ben 
+Password - B12345
+
+
+Academic Manager 
+Username - Simon 
+Password - S12345

@@ -37,7 +37,7 @@ namespace PROG6212_PART_3.Models.ViewModels
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Hourly rate is required")]
-        [Range(50, 1000, ErrorMessage = "Hourly rate must be between R50 and R1000")]
+        [Range(0, 1000, ErrorMessage = "Hourly rate must be between R50 and R1000")]
         [Display(Name = "Hourly Rate")]
         public double HourlyRate { get; set; }
 
