@@ -8,7 +8,7 @@ builder.Services.AddControllersWithViews();
 
 // Add SQLite Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Session Support (REQUIRED for authentication)
 builder.Services.AddDistributedMemoryCache();
